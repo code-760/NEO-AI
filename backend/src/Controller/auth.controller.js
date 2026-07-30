@@ -17,6 +17,7 @@ export const register = async (req, res) => {
       err: 'User already exists',
     });
   }
+  
 
   const user = await userModel.create({ username, email, password });
 
@@ -165,3 +166,4 @@ export const verifyEmail = async (req, res) => {
     });
   }
 };
+
