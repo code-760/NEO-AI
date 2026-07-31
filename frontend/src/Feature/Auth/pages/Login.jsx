@@ -1,33 +1,63 @@
-import { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useState } from "react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
+import { useauth } from "../hook/userAuth";
+import { ToastContainer, toast } from "react-toastify";
+import { Navigate, useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-
+  // states
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
+  // Hooks
+  const { user, loading } = useSelector((state) => state.auth);
+  const { hendallogin } = useauth();
+  const navigate = useNavigate();
+
+  // functions:-
+
+
+  // get input value
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setIsLoading(true);
 
-    setTimeout(() => {
-      console.log('Login submitted:', formData);
+
+  // login api call
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+    try {
+      await hendallogin({
+        email: formData.email,
+        password: formData.password,
+      });
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
   };
+
+  // If user is already logged in and loading is complete,
+  // redirect to the dashboard/home page.
+  if (!loading && user) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     // Screen Center Alignment
     <div className="flex min-h-screen w-full items-center justify-center bg-[#0C1327] p-4">
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-slate-900/80 p-8 shadow-2xl backdrop-blur-2xl transition-all duration-300 hover:border-white/20">
         {/* Background Accent Glow */}
         <div className="pointer-events-none absolute -top-24 -left-20 h-48 w-48 rounded-full bg-indigo-500/20 blur-3xl" />
@@ -38,11 +68,15 @@ const Login = () => {
           {/* Logo Container */}
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-slate-800/80 shadow-inner shadow-indigo-500/10 backdrop-blur-md">
             {/* Apne project ka Logo SVG ya Image component yahan badal sakte hain */}
-           <img src="/public/neo_ai.png" alt="" />
+            <img src="/neo_ai.png" alt="" />
           </div>
 
-          <h2 className="text-3xl font-bold tracking-tight text-white">Welcome Back</h2>
-          <p className="mt-2 text-sm text-slate-400">Access your account with your credentials</p>
+          <h2 className="text-3xl font-bold tracking-tight text-white">
+            Welcome Back
+          </h2>
+          <p className="mt-2 text-sm text-slate-400">
+            Access your account with your credentials
+          </p>
         </div>
 
         {/* Form */}
@@ -73,10 +107,16 @@ const Login = () => {
           {/* Password Field */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-300" htmlFor="login-password">
+              <label
+                className="text-xs font-semibold uppercase tracking-wider text-slate-300"
+                htmlFor="login-password"
+              >
                 Password
               </label>
-              <a href="#forgot" className="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">
+              <a
+                href="#forgot"
+                className="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+              >
                 Forgot?
               </a>
             </div>
@@ -85,7 +125,7 @@ const Login = () => {
               <input
                 id="login-password"
                 name="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 required
                 value={formData.password}
                 onChange={handleChange}
@@ -97,7 +137,11 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3.5 text-slate-400 hover:text-slate-200 focus:outline-none"
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
           </div>

@@ -2,42 +2,77 @@ import { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useauth } from '../hook/userAuth';
 import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router';
 
 
 const Register = () => {
 
-  const user = useSelector((state) => state.auth.user);
 
-  const {hendaregistar}=useauth()
+  // states
+ 
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
+  // HOOks
+  const {user,loading}=useSelector((state)=>state.auth)
+  const navigate = useNavigate();
+  const {hendaregistar}=useauth()
+
+
+
+
+// functions:-
+
+  // get input value
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    (true);
 
-    hendaregistar(formData)
-    
-
-
-
-;
+ // registar api call
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      await hendaregistar({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
+     
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+  
+      // Success toast yaha mat lagana
+      // Kyuki hendaregistar me already hai
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+// If user is already register in and loading is complete,
+  // redirect to the dashboard/home page.
+  if(!loading && user){
+    return <Navigate to="/" replace />
+}
+
+
 
   return (
     // Screen Center Alignment
     <div className="flex min-h-screen w-full items-center justify-center bg-[#0C1327] p-4">
+      <ToastContainer position="top-right" autoClose={3000} theme="colored"
+      
+      />
       <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-slate-900/80 p-8 shadow-2xl backdrop-blur-2xl transition-all duration-300 hover:border-white/20">
         {/* Background Accent Glow */}
         <div className="pointer-events-none absolute -top-24 -left-20 h-48 w-48 rounded-full bg-indigo-500/20 blur-3xl" />
@@ -139,12 +174,19 @@ const Register = () => {
             className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-0.5 font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-indigo-500/40 active:scale-[0.98] disabled:opacity-70"
           >
             <span className="flex w-full items-center justify-center gap-2 rounded-[10px] bg-slate-950/20 px-4 py-3.5 text-sm transition-all duration-300 group-hover:bg-transparent">
-              {isLoading ? (
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              {loading ? (
+                
+                <div
+                  class="w-10 h-10 border-4 border-t-pink-500  border-gray-300 rounded-full animate-spin "
+                >
+                  <span className="sr-only">Loading...</span>
+                </div>
+                
               ) : (
                 <>
                   Sign Up
                   <UserPlus className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+               
                 </>
               )}
             </span>
