@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 import authRoute from './Routes/auth.route.js';
+import chatRoute from './Routes/chat.route.js';
 
 
 
@@ -28,5 +29,7 @@ app.get('/', (req, res) => {
 
 
 app.use('/auth', authRoute);
+app.use('/chats', chatRoute);
+
 
 export default app;
