@@ -1,17 +1,40 @@
-
+import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { ChatMistralAI } from '@langchain/mistralai';
 
 const MISTRALALMODAL = new ChatMistralAI({
-  model: 'mistral-large-latest',
+  model: 'mistral-small-latest',
   apiKey: process.env.MISTRALAL_API_KEY,
 });
 
 
-export const MISTRALAL=async(messages)=>{
+
+export const MISTRALAL = async (messages) => {
+  const langchainMessages = messages.map((msg) => {
+    
+    if (msg.role === 'user') return new HumanMessage(msg.content);
+    if (msg.role === 'ai') return new AIMessage(msg.content);
 
 
-  const response = await MISTRALALMODAL.invoke(messages);
+    return new HumanMessage(msg.content);
+  });
 
-  console.log(response.text)
+  const response = await MISTRALALMODAL.invoke(langchainMessages);
 
-}
+  return response.text
+    .replace(/[*"`]/g, '')
+    .trim();
+};
+
+export const sendmessagestitle = async (message) => {
+  const response = await MISTRALALMODAL.invoke([
+    new SystemMessage(`You are a helpful assistant that generates concise and relevant titles for user messages. Your task is to create a 3-5 word title that accurately summarizes the content of the user's message. Please ensure the title is clear, engaging, and directly related to the message provided.`),
+    new HumanMessage(`Generate a 3-5 word title for this first message:\n"${message}"`),
+  ]);
+
+  const text = normalizeText(response.text ?? response.content);
+
+  return text
+    .split('\n')[0]
+    .replace(/[*"`]/g, '')
+    .trim();
+};
