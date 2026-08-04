@@ -106,8 +106,11 @@ export const login = async (req, res) => {
 
 
 export const getme = async (req, res) => {
+
+  console.log(req.user)
   try {
-    const user = await userModel.findById(req.user.userid).select('-password');
+    const user = await userModel.findById(req.user.id).select('-password');
+
 
     if (!user) {
       return res.status(404).json({
