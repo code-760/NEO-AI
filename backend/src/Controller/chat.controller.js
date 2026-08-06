@@ -56,3 +56,85 @@ export const sendmessages = async (req, res) => {
     res.status(500).json({ message: 'Something went wrong while sending the message.' });
   }
 };
+
+export const getchat = async (req, res) => {
+  const { token } = req.user.id;
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+
+  const chatdeta = await chatModel.find({ user: req.user.id });
+
+  if (!chatdeta) {
+    return res.status(404).json({
+      message: 'Chat not found',
+      success: false,
+    });
+  }
+
+  res.status(201).json({
+    message: 'chat fetched successfully',
+    success: true,
+    chatdeta,
+  });
+};
+
+export const getmessages = async (req, res) => {
+  const { token } = req.user.id;
+  const { chatId } = req.query;
+
+  const chat = await chatModel.findOne({
+    _id: chatId,
+    user: token,
+  });
+
+  if (!chat) {
+    return rec.status(404).json({
+      message: 'chat is not found',
+    });
+  }
+
+  const messages = await messageModel.find({
+    chat: chatId,
+  });
+
+  if(!message){
+   return res.status(404).json({
+    message:"messages is not fonde",
+    success:false
+   })
+  }
+
+  res.status(200).json({
+    message: 'messages fetched successfully ',
+    success:true,
+    messages
+  });
+
+
+};
+
+
+export const deletchat=async (req,res)=>{
+
+  const {chatId}=req.qurey
+
+
+  const chat= await chatModel.findByIdAndDelete({id:chatId,user:req.user.id})
+
+  if(!chat){
+    return req.status(404).json({
+      message:"chat not found"
+    })
+  }
+
+  const message = await messageModel.deleteMany({chat:chatId})
+
+
+  res.status(201).json({
+    message:"messages and chat deleted",
+    success:true
+  })
+
+}

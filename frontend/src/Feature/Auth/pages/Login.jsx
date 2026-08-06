@@ -44,7 +44,7 @@ const Login = () => {
         email: formData.email,
         password: formData.password,
       });
-      navigate("/");
+      navigate("/app");
     } catch (error) {
       console.log(error);
     } finally {
@@ -55,7 +55,7 @@ const Login = () => {
   // If user is already logged in and loading is complete,
   // redirect to the dashboard/home page.
   if (!loading && user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/app" replace />;
   }
 
   return (

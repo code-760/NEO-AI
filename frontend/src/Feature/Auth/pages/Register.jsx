@@ -62,7 +62,7 @@ const Register = () => {
 // If user is already register in and loading is complete,
   // redirect to the dashboard/home page.
   if(!loading && user){
-    return <Navigate to="/" replace />
+    return <Navigate to="/app" replace />
 }
 
 

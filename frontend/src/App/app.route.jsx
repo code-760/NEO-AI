@@ -12,7 +12,7 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "/",
+    path: "/app",
     element: (
       <Protected>
         <Dashboard />
