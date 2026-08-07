@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Plus,
   Bot,
@@ -27,13 +27,36 @@ import {
   
 } from 'lucide-react';
 import Profilecard from '../Components/Profilecard';
+import { usechat } from '../Hook/usechat';
+import { useSelector } from 'react-redux';
 
 
 export default function Dashboard() {
 
-
+  const [promptText, setPromptText] = useState('');
+  const chatHook = usechat();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const chats=useSelector((state)=>state.chat.chats)
+
+
+
+  const createdchatId=useSelector((state)=>state.chat.createdchatId)
+
+  useEffect(() => {
+    chatHook.initializeSocket();
+  }, []);
+
+  const handlePromptSubmit = async (event) => {
+    event.preventDefault();
+    const trimmedMessage = promptText.trim();
+    if (!trimmedMessage) return;
+
+
+    await chatHook.hendalsendchat({ message: trimmedMessage , chatId: createdchatId });
+    setPromptText('');
+  };
 
 
 
@@ -47,128 +70,7 @@ export default function Dashboard() {
     'Tavily AI Overview',
   ];
 
-  const quickQuestions = [
-    {
-      id: 1,
-      question: 'What is the primary difference between props and state in React?',
-      answer:
-        'Props (short for properties) are read-only inputs passed into a component from its parent, used to configure or pass data down. State is managed internally within a component and can change over time in response to user actions or network responses.',
-    },
-    {
-      id: 2,
-      question: 'Why is JavaScript considered case-sensitive when naming variables and function calls?',
-      answer:
-        'JavaScript treats uppercase and lowercase letters as distinct characters. For example, `onClose` and `onclose` refer to two entirely different identifiers in memory, which is why mismatched casing results in `undefined` errors.',
-    },
-    {
-      id: 3,
-      question: 'How do you destructure props in a functional React component?',
-      answer:
-        'You destructure props directly inside the function parameter list using curly braces. For example: `const MyComponent = ({ isOpen, onClose }) => { ... }`.',
-    },
-    {
-      id: 4,
-      question:
-        'What happens if you pass a prop as camelCase (e.g., `onClose`) but access it in lowercase (`onclose`)?',
-      answer:
-        'Because JavaScript is case-sensitive, accessing `onclose` inside the component will return `undefined` because the prop was stored on the props object under the key `onClose`.',
-    },
-    {
-      id: 5,
-      question: 'What is the purpose of the `useState` hook in React?',
-      answer:
-        '`useState` allows functional components to hold and update local state. It returns an array with two elements: the current state value and a function to update that value.',
-    },
-    {
-      id: 6,
-      question: 'How do you conditionally render a component in React using short-circuit evaluation (`&&`)?',
-      answer:
-        'You evaluate a boolean expression before the component using `&&`. For example: `{isOpen && <ProfileCard />}` will only render `<ProfileCard />` if `isOpen` evaluates to `true`.',
-    },
-    {
-      id: 7,
-      question: 'What is the difference between passing `onClick={handleClick}` versus `onClick={handleClick()}`?',
-      answer:
-        '`onClick={handleClick}` passes the function reference to be executed later when the click event happens. `onClick={handleClick()}` invokes the function immediately during component rendering and passes its return value to `onClick`.',
-    },
-    {
-      id: 8,
-      question: 'What value does an uninitialized or missing prop evaluate to inside a component?',
-      answer: 'If a prop is expected by a component but not passed by the parent, its value defaults to `undefined`.',
-    },
-    {
-      id: 9,
-      question: 'How does the `useEffect` hook handle dependencies, and what causes it to re-run?',
-      answer:
-        '`useEffect` runs after every render if no dependency array is passed. If an empty array `[]` is passed, it runs once on mount. If dependencies are specified `[a, b]`, it re-runs whenever any of those values change between renders.',
-    },
-    {
-      id: 10,
-      question: 'What is component re-rendering, and what primary triggers cause it?',
-      answer:
-        "Re-rendering is the process where React executes a component function again to compute new UI JSX. It is primarily triggered by changes to the component's state or props, or a parent component re-rendering.",
-    },
-    {
-      id: 11,
-      question: 'How do you pass data from a child component back up to a parent component?',
-      answer:
-        'The parent component passes a callback function as a prop to the child. When an event occurs, the child invokes this callback function with the data as an argument.',
-    },
-    {
-      id: 12,
-      question: 'What is the role of `key` props when rendering lists in React?',
-      answer:
-        '`key` props provide a unique identity to list items so React can efficiently track, reorder, add, or remove items in the Virtual DOM without re-rendering the entire list.',
-    },
-    {
-      id: 13,
-      question: 'What is a controlled component in React forms?',
-      answer:
-        'A controlled component is an input element whose value is bound to React state, and updates are handled via an `onChange` callback that updates that state.',
-    },
-    {
-      id: 14,
-      question: 'How does optional chaining (`?.`) help prevent runtime errors when invoking prop functions?',
-      answer:
-        "Optional chaining checks if a function exists before invoking it (e.g., `onClose?.()`). If `onClose` is `undefined` or `null`, the code skips execution instead of throwing a 'TypeError: onClose is not a function'.",
-    },
-    {
-      id: 15,
-      question: 'What is the Virtual DOM, and how does React use it to optimize updates?',
-      answer:
-        'The Virtual DOM is a lightweight, in-memory representation of the real DOM. React compares the new Virtual DOM with the previous one (a process called reconciliation) and updates only the changed elements in the actual DOM.',
-    },
-    {
-      id: 16,
-      question: 'What is the difference between named exports and default exports in ES6 modules?',
-      answer:
-        'A module can have only one `default` export, which can be imported without curly braces using any name. A module can have multiple `named` exports, which must be imported using their exact names wrapped in curly braces `{}`.',
-    },
-    {
-      id: 17,
-      question: 'Why should you never mutate state directly in React (e.g., `state.count = 5`)?',
-      answer:
-        "Direct mutation modifies the object in memory without triggering React's reconciliation process, causing the UI to fail to update and leading to unpredictable component behavior.",
-    },
-    {
-      id: 18,
-      question: 'What is the purpose of `React.memo`?',
-      answer:
-        "`React.memo` is a higher-order component that performance-optimizes functional components by skipping re-renders if the component's props have not changed.",
-    },
-    {
-      id: 19,
-      question: 'How do default props or default parameter values work in JavaScript functional components?',
-      answer:
-        'Default values can be assigned directly in the function arguments during destructuring (e.g., `({ isOpen = false }) => ...`). If the prop is passed as `undefined`, the default value will be used.',
-    },
-    {
-      id: 20,
-      question: 'What is prop drilling, and what tools or patterns can be used to avoid it?',
-      answer:
-        'Prop drilling is the process of passing props through multiple levels of nested components that do not need the data themselves. It can be avoided using React Context API, custom hooks, or state management libraries like Redux or Zustand.',
-    },
-  ];
+ 
   return (
     <div className="bg-[#f2f3f7] w-full h-screen flex items-center justify-center text-gray-700 font-sans">
       {/* Main Window Container */}
@@ -332,19 +234,23 @@ export default function Dashboard() {
               <div className="w-full max-w-3xl mb-24 flex flex-col gap-6">
                 {/* Scrollable Container with Hidden Scrollbar */}
                 <div className="flex flex-col gap-6 max-h-[600px] overflow-y-auto scrollbar-hide pr-1">
-                  {quickQuestions.map((obj, index) => (
+                  {chats[createdchatId]?.messages.map((obj, index) => (
                     <div key={obj.id || index} className="flex flex-col gap-3">
-                      {/* User Question (Right Aligned) */}
-                      <div className="flex items-start justify-end gap-3">
-                        <div className="bg-indigo-600 text-white rounded-2xl px-4 py-3 shadow-md max-w-[80%]">
-                          <p className="text-sm font-medium">{obj.question}</p>
-                        </div>
-                      </div>
-
-                      {/* AI Answer (Left Aligned) */}
-                      <div className="flex items-start justify-start gap-3">
-                        <div className="bg-white/80 border border-indigo-100 rounded-2xl px-4 py-3 shadow-sm max-w-[80%] backdrop-blur-sm">
-                          <p className="text-sm text-gray-700 leading-relaxed">{obj.answer}</p>
+                      <div
+                        className={`flex items-start gap-3 ${
+                          obj.role === 'user' ? 'justify-end' : 'justify-start'
+                        }`}
+                      >
+                        <div
+                          className={`rounded-2xl px-4 py-3 shadow-sm max-w-[80%] ${
+                            obj.role === 'user'
+                              ? 'bg-indigo-600 text-white shadow-md'
+                              : 'bg-white/80 border border-indigo-100 text-gray-700 backdrop-blur-sm'
+                          }`}
+                        >
+                          <p className={`text-sm leading-relaxed ${obj.role === 'user' ? 'font-medium' : ''}`}>
+                            {obj.content}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -353,10 +259,13 @@ export default function Dashboard() {
               </div>
 
               {/* Prompt Box */}
-              <div className="w-full bg-white/70 backdrop-blur-md border border-indigo-100 rounded-2xl p-4 shadow-xl shadow-indigo-500/5 absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 max-w-3xl">
+              <form onSubmit={handlePromptSubmit} className="w-full bg-white/70 backdrop-blur-md border border-indigo-100 rounded-2xl p-4 shadow-xl shadow-indigo-500/5 absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 max-w-3xl">
                 <div className="flex items-start gap-2">
                   <Sparkles className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" />
                   <textarea
+                    name="prompt"
+                    value={promptText}
+                    onChange={(event) => setPromptText(event.target.value)}
                     placeholder="Initiate a query or send a command to the AI..."
                     className="w-full bg-transparent border-none text-xs md:text-sm text-gray-700 placeholder-gray-400 focus:outline-none resize-none h-8"
                   ></textarea>
@@ -366,11 +275,11 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between border-t border-gray-100/60 pt-3">
                   {/* Feature Pills */}
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <button className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                    <button type="button" className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
                       <Paperclip className="w-4 h-4" />
                     </button>
 
-                    <button className="flex items-center gap-1 px-2.5 py-1 bg-gray-100/80 hover:bg-gray-200/80 rounded-lg text-[11px] font-medium text-gray-600 transition">
+                    <button type="button" className="flex items-center gap-1 px-2.5 py-1 bg-gray-100/80 hover:bg-gray-200/80 rounded-lg text-[11px] font-medium text-gray-600 transition">
                       <ImageIcon className="w-3 h-3 text-gray-500" />
                       <span>Create Image</span>
                     </button>
@@ -378,15 +287,15 @@ export default function Dashboard() {
 
                   {/* Submit / Voice Action Button */}
                   <div className="flex items-center gap-2">
-                    <button className="w-7 h-7 bg-indigo-500 active:scale-95 hover:bg-indigo-600 text-white rounded-lg flex items-center justify-center shadow-md shadow-indigo-200 transition">
+                    <button type="button" className="w-7 h-7 bg-indigo-500 active:scale-95 hover:bg-indigo-600 text-white rounded-lg flex items-center justify-center shadow-md shadow-indigo-200 transition">
                       <Mic className="w-3.5 h-3.5" />
                     </button>
-                    <button className="w-7 h-7 active:scale-95 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg flex items-center justify-center shadow-md shadow-indigo-200 transition">
+                    <button type="submit" className="w-7 h-7 active:scale-95 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg flex items-center justify-center shadow-md shadow-indigo-200 transition">
                       <Send className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
 
             {/* Footer Background Gradient Glow */}
