@@ -5,10 +5,10 @@ import { userauth } from '../Middleware/auth.middleware.js';
 
 const chatRoute = express.Router()
 
-chatRoute.post('/chat/messages',userauth,sendmessages);
-chatRoute.get('/chat/chats',userauth,getchat);
-chatRoute.get('/chat/messages/:chatId',userauth,getmessages);
-chatRoute.delete('/chat/delete/:chaId',userauth,deletchat);
+chatRoute.post('/messages',userauth,sendmessages);
+chatRoute.get('/user/chats',userauth,getchat);
+chatRoute.get('/messages/:chatId',userauth,getmessages);
+chatRoute.delete('/delete/:chatId',userauth,deletchat);
 
 
 

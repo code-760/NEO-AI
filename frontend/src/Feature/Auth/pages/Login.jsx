@@ -21,7 +21,7 @@ const Login = () => {
 
 
 
-  console.log(user)
+
 
   // functions:-
 

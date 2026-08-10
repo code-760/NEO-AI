@@ -51,6 +51,8 @@ export const sendmessages = async (req, res) => {
       AIMessage,
       chat,
     });
+
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Something went wrong while sending the message.' });
@@ -58,8 +60,12 @@ export const sendmessages = async (req, res) => {
 };
 
 export const getchat = async (req, res) => {
-  const { token } = req.user.id;
+  const token = req.user.id;
 
+  console.log(req.user.id)
+
+
+  
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized: No token provided' });
   }
@@ -78,19 +84,24 @@ export const getchat = async (req, res) => {
     success: true,
     chatdeta,
   });
+
 };
 
 export const getmessages = async (req, res) => {
-  const { token } = req.user.id;
-  const { chatId } = req.query;
+  const  userId  = req.user.id;
+ const { chatId } = req.params;
+
+  console.log(chatId,userId)
 
   const chat = await chatModel.findOne({
-    _id: chatId,
-    user: token,
+    _id:chatId ,
+    user: userId,
   });
 
+  console.log(chat)
+
   if (!chat) {
-    return rec.status(404).json({
+    return res.status(404).json({
       message: 'chat is not found',
     });
   }
@@ -99,13 +110,16 @@ export const getmessages = async (req, res) => {
     chat: chatId,
   });
 
-  if(!message){
+  console.log(messages.length)
+
+  if(!messages){
    return res.status(404).json({
     message:"messages is not fonde",
     success:false
    })
   }
 
+  
   res.status(200).json({
     message: 'messages fetched successfully ',
     success:true,
