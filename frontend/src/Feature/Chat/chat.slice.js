@@ -33,6 +33,7 @@ const chatslice = createSlice({
         state.chats[chatId].lastUpdated = new Date().toISOString();
       }
     },
+    
 
     addMessages: (state, action) => {
       const { chatId, messages } = action.payload;

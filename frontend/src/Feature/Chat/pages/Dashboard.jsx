@@ -27,29 +27,46 @@ import {
 } from 'lucide-react';
 import Profilecard from '../Components/Profilecard';
 import { usechat } from '../Hook/usechat';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { addnewmessage } from '../chat.slice';
+import Loading from '../Components/Chatloading/loading';
 
 export default function Dashboard() {
-
-
   // State and Hooks
   const [promptText, setPromptText] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-
+  const [tempMessage, setTempMessage] = useState(null);
+  const dispatch = useDispatch();
 
   const chatHook = usechat();
-  const chats = useSelector((state) => state.chat.chats);
+  const chatdata = useSelector((state) => state.chat.chats);
   const createdchatId = useSelector((state) => state.chat.createdchatId);
   const user = useSelector((state) => state.auth.user);
+  const Lodaing = useSelector((state) => state.chat.loading);
 
-  console.log('User:', user);
+  const chats = Object.values(chatdata).reverse();
+
   useEffect(() => {
     chatHook.initializeSocket();
     chatHook.hendalgetchat();
   }, []);
 
+  // useEffect(() => {
+  //   if (!createdchatId || !tempMessage) return;
+
+  //   dispatch(
+  //     addnewmessage({
+  //       chatId: createdchatId,
+  //       content: tempMessage.content,
+  //       role: tempMessage.role,
+  //     }),
+  //   );
+
+  //   setTempMessage(null);
+  // }, [createdchatId, tempMessage, dispatch]);
 
   // Function to handle prompt submission
 
@@ -57,21 +74,34 @@ export default function Dashboard() {
     event.preventDefault();
     const trimmedMessage = promptText.trim();
     if (!trimmedMessage) return;
-
-    await chatHook.hendalsendchat({ message: trimmedMessage, chatId: createdchatId });
     setPromptText('');
+
+    if (createdchatId) {
+      // Condition 1: Agar chat pehle se bana hua hai (Normal Flow)
+      dispatch(
+        addnewmessage({
+          chatId: createdchatId,
+          content: trimmedMessage,
+          role: 'user',
+        }),
+      );
+      await chatHook.hendalsendchat({ message: trimmedMessage, chatId: createdchatId });
+    } else {
+      // Condition 2: Agar yeh 1ST MESSAGE hai (Naya Chat)
+      // Turant screen par dikhane ke liye local state me set karein
+      setTempMessage({ content: trimmedMessage, role: 'user' });
+
+      // Backend ko request bhejein naya chat banane ke liye
+      await chatHook.hendalsendchat({ message: trimmedMessage, chatId: null });
+    }
   };
 
   const openedChat = (chatId) => {
     chatHook.handelgetmessages(chatId);
   };
 
-
-
-
   return (
     <div className="bg-[#f2f3f7] w-full h-screen flex items-center justify-center text-gray-700 font-sans">
-      
       <div className="w-full  h-screen bg-[#f8f9fc] rounded-3xl shadow-2xl border border-white/60 flex flex-col overflow-hidden">
         <div className="flex-1 flex overflow-hidden">
           <aside className="w-64 bg-[#f2f3f7]/50 border-r border-gray-200/60  flex flex-col justify-between">
@@ -115,8 +145,8 @@ export default function Dashboard() {
               {/* History Sections */}
               <div className="space-y-4 pt-2">
                 <div>
-                  <ul className="space-y-1 max-h-[350px] overflow-y-auto scroll-smooth scrollbar-hide">
-                    {Object.values(chats).map((chat) => (
+                  <ul className="space-y-1 max-h-[350px] h-[350px]  overflow-y-auto scroll-smooth scrollbar-hide">
+                    {chats.map((chat) => (
                       <li key={chat.id}>
                         <button
                           onClick={() => {
@@ -157,7 +187,7 @@ export default function Dashboard() {
           </aside>
 
           {/* Main Workspace */}
-          <main className="flex-1 flex flex-col justify-center items-end p-6 relative overflow-hidden bg-gradient-to-b from-transparent via-white/50 to-indigo-50/30">
+          <main className="flex-1 flex flex-col  items-end p-6 relative overflow-hidden bg-gradient-to-b from-transparent via-white/50 to-indigo-50/30">
             {/* Header Controls */}
             <div className="flex items-center justify-between z-10">
               {/* Action Controls */}
@@ -175,39 +205,62 @@ export default function Dashboard() {
             </div>
 
             {/* Center Greeting & Prompt Box */}
-            <div className="max-w-2xl mx-auto w-full flex flex-col items-center justify-center my-auto z-10">
+            <div className=" mx-auto w-full flex flex-col items-center   z-10">
               {/* Glossy Sphere Decorative Element */}
 
-              <div className="w-full max-w-3xl mb-24 flex flex-col gap-6">
+              <div className="w-full max-w-5xl mb-24 flex flex-col gap-6">
                 <div className="flex flex-col gap-6 max-h-[600px] overflow-y-auto scrollbar-hide pr-1 pb-22 scroll-smooth">
-                  {createdchatId && chats[createdchatId]?.messages?.length > 0 ? (
-                    chats[createdchatId].messages.map((obj, index) => (
-                      <div key={obj.id || index} className="flex flex-col gap-3">
-                        <div
-                          className={`flex items-start gap-3 ${obj.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                          <div
-                            className={`rounded-2xl px-4 py-3 shadow-sm max-w-[80%] ${
-                              obj.role === 'user'
-                                ? 'bg-indigo-600 text-white shadow-md'
-                                : 'bg-white/80 border border-indigo-100 text-gray-700 backdrop-blur-sm mb-2'
-                            }`}
-                          >
-                            <p className={`text-sm leading-relaxed ${obj.role === 'user' ? 'font-medium' : ''}`}>
-                              {obj.content}
-                            </p>
+                  {(createdchatId && chatdata[createdchatId]?.messages?.length > 0) || tempMessage ? (
+                    <>
+                      {/* Agar naya chat hai (1st message), toh Temporary Message dikhao */}
+                      {tempMessage && (
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-start gap-3 justify-end">
+                            <div className="rounded-2xl px-4 py-3 bg-indigo-600 text-white shadow-md max-w-[80%]">
+                              <div className="text-mb leading-7 font-medium">
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{tempMessage.content}</ReactMarkdown>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))
+                      )}
+
+                      {/* Agar chat pehle se hai, toh normal messages dikhao */}
+                      {createdchatId &&
+                        chatdata[createdchatId]?.messages?.map((obj, index) => (
+                          <div key={obj.id || index} className="flex flex-col gap-3">
+                            <div
+                              className={`flex items-start gap-3 ${obj.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                            >
+                              <div
+                                className={`rounded-2xl px-4 py-3 ${obj.role === 'user' ? 'bg-indigo-600 text-white shadow-md max-w-[80%]' : 'text-gray-700 mb-2'}`}
+                              >
+                                <div className={`text-mb leading-7 ${obj.role === 'user' ? 'font-medium' : ''}`}>
+                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{obj.content}</ReactMarkdown>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+
+                      {Lodaing && (
+                        <div className="flex flex-col gap-3">
+                          {/* 'justify-start' lagaya hai taaki yeh left side (AI ki taraf) aaye */}
+                          <div className="flex items-start gap-3 justify-start">
+                            <div className="rounded-2xl px-4 py-3 text-gray-700 mb-2 max-w-[80%]">
+                              <Loading />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <div className="flex flex-col items-center justify-center gap-6 mt-20">
+                      {/* Aapka purana Good Morning UI */}
                       <div className="w-16 h-16 mb-6 rounded-full bg-gradient-to-tr from-indigo-300 via-purple-200 to-pink-200 shadow-lg shadow-indigo-100 flex items-center justify-center relative overflow-hidden">
                         <div className="absolute inset-0 bg-white/30 backdrop-blur-[1px] rounded-full"></div>
                         <div className="w-6 h-6 bg-white/60 rounded-full blur-[2px] absolute top-2 left-3"></div>
                       </div>
-
-                      {/* Greeting */}
                       <h1 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 tracking-tight">
                         Good Morning, Judha
                         <br />
@@ -298,13 +351,12 @@ export default function Dashboard() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-
             Recent Chats Section
             {/* <div className="mt-2">
               <p className="mb-4 text-xs text-gray-400 font-normal">Recent chats</p>
 
               {/* List Items */}
-              {/* <div className="space-y-3">
+            {/* <div className="space-y-3">
                 {recentChats.map((chat, index) => (
                   <div
                     key={index}

@@ -40,14 +40,6 @@ export const usechat = () => {
     dispatch(
       addnewmessage({
         chatId: chatid,
-        content: message,
-        role: 'user',
-      }),
-    );
-
-    dispatch(
-      addnewmessage({
-        chatId: chatid,
         content: AIMessage?.content,
         role: 'ai',
       }),
@@ -60,12 +52,14 @@ export const usechat = () => {
   const hendalgetchat = async () => {
     const data = await getchat();
 
-    const chats = data.data.chatdeta.map((chat) => ({
-      id: chat._id,
-      title: chat.title,
-      messages: chat.messages || [],
-      lastUpdated: chat.lastUpdated,
-    }));
+    const chats = data.data.chatdeta
+      .map((chat) => ({
+        id: chat._id,
+        title: chat.title,
+        messages: chat.messages || [],
+        lastUpdated: chat.lastUpdated,
+      }))
+      
 
     dispatch(setchat(chats));
   };

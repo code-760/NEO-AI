@@ -1,104 +1,71 @@
-/* From Uiverse.io by andrew-manzyk */ 
-.loader {
-  --fill-color: #5c3d99;
-  --shine-color: #5c3d9933;
-  transform: scale(0.5); /* You can change the size */
-  width: 100px;
-  height: auto;
-  position: relative;
-  filter: drop-shadow(0 0 10px var(--shine-color));
+/* From Uiverse.io by dovatgabriel */ 
+.leap-frog {
+ --uib-size: 40px;
+ --uib-speed: 2s;
+ --uib-color:#4F39F6;
+ position: relative;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ width: var(--uib-size);
+ height: var(--uib-size);
 }
 
-.loader #pegtopone {
-  position: absolute;
-  animation: flowe-one 1s linear infinite;
+.leap-frog__dot {
+ position: absolute;
+ top: 0;
+ left: 0;
+ display: flex;
+ align-items: center;
+ justify-content: flex-start;
+ width: 100%;
+ height: 100%;
 }
 
-.loader #pegtoptwo {
-  position: absolute;
-  opacity: 0;
-  transform: scale(0) translateY(-200px) translateX(-100px);
-  animation: flowe-two 1s linear infinite;
-  animation-delay: 0.3s;
+.leap-frog__dot::before {
+ content: '';
+ display: block;
+ height: calc(var(--uib-size) * 0.22);
+ width: calc(var(--uib-size) * 0.22);
+ border-radius: 50%;
+ background-color: var(--uib-color);
+ will-change: transform;
 }
 
-.loader #pegtopthree {
-  position: absolute;
-  opacity: 0;
-  transform: scale(0) translateY(-200px) translateX(100px);
-  animation: flowe-three 1s linear infinite;
-  animation-delay: 0.6s;
+.leap-frog__dot:nth-child(1) {
+ animation: leapFrog var(--uib-speed) ease infinite;
 }
 
-.loader svg g path:first-child {
-  fill: var(--fill-color);
+.leap-frog__dot:nth-child(2) {
+ transform: translateX(calc(var(--uib-size) * 0.4));
+ animation: leapFrog var(--uib-speed) ease calc(var(--uib-speed) / -1.5)
+    infinite;
 }
 
-@keyframes flowe-one {
-  0% {
-    transform: scale(0.5) translateY(-200px);
-    opacity: 0;
-  }
-  25% {
-    transform: scale(0.75) translateY(-100px);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1) translateY(0px);
-    opacity: 1;
-  }
-  75% {
-    transform: scale(0.5) translateY(50px);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0) translateY(100px);
-    opacity: 0;
-  }
+.leap-frog__dot:nth-child(3) {
+ transform: translateX(calc(var(--uib-size) * 0.8)) rotate(0deg);
+ animation: leapFrog var(--uib-speed) ease calc(var(--uib-speed) / -3)
+    infinite;
 }
 
-@keyframes flowe-two {
-  0% {
-    transform: scale(0.5) rotateZ(-10deg) translateY(-200px) translateX(-100px);
-    opacity: 0;
-  }
-  25% {
-    transform: scale(1) rotateZ(-5deg) translateY(-100px) translateX(-50px);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1) rotateZ(0deg) translateY(0px) translateX(-25px);
-    opacity: 1;
-  }
-  75% {
-    transform: scale(0.5) rotateZ(5deg) translateY(50px) translateX(0px);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0) rotateZ(10deg) translateY(100px) translateX(25px);
-    opacity: 0;
-  }
-}
+@keyframes leapFrog {
+ 0% {
+  transform: translateX(0) rotate(0deg);
+ }
 
-@keyframes flowe-three {
-  0% {
-    transform: scale(0.5) rotateZ(10deg) translateY(-200px) translateX(100px);
-    opacity: 0;
-  }
-  25% {
-    transform: scale(1) rotateZ(5deg) translateY(-100px) translateX(50px);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1) rotateZ(0deg) translateY(0px) translateX(25px);
-    opacity: 1;
-  }
-  75% {
-    transform: scale(0.5) rotateZ(-5deg) translateY(50px) translateX(0px);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0) rotateZ(-10deg) translateY(100px) translateX(-25px);
-    opacity: 0;
-  }
+ 33.333% {
+  transform: translateX(0) rotate(180deg);
+ }
+
+ 66.666% {
+  transform: translateX(calc(var(--uib-size) * -0.4)) rotate(180deg);
+ }
+
+ 99.999% {
+  transform: translateX(calc(var(--uib-size) * -0.8)) rotate(180deg);
+ }
+
+ 100% {
+  transform: translateX(0) rotate(0deg);
+ }
 }

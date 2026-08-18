@@ -21,7 +21,7 @@ export const MISTRALAL = async (messages) => {
 
   const response = await MISTRALALMODAL.invoke(langchainMessages);
 
-  return normalizeText(response.text);
+  return response.text;
 };
 
 export const sendmessagestitle = async (message) => {
