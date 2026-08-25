@@ -1,44 +1,54 @@
+import { google } from 'googleapis';
 
-import { Resend } from 'resend';
+// 1. Google API ko apni keys ke sath initialize karo
+const oAuth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  'https://developers.google.com/oauthplayground',
+);
 
-// Resend ko API key ke sath initialize karo
-const resend = new Resend(process.env.RESEND_API_KEY);
+oAuth2Client.setCredentials({
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+});
+
+const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
 
 export const sendEmail = async ({ to, subject, html, text }) => {
   try {
-    const data = await resend.emails.send({
-      // Free tier me 'from' address yahi same rakhna padta hai
-      from: 'himanshu82kumawat@resend.dev',
-      to: to,
-      subject: subject,
-      html: html,
-      text,
+    // 2. Email ka format set karna
+    const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString('base64')}?=`;
+    const messageParts = [
+      `From: Admin <${process.env.GOOGLE_USER}>`,
+      `To: ${to}`,
+      'Content-Type: text/html; charset=utf-8',
+      'MIME-Version: 1.0',
+      `Subject: ${utf8Subject}`,
+      '',
+      html || text,
+    ];
+
+    // 3. Message ko encode karna (Google ki strict requirement)
+    const encodedMessage = Buffer.from(messageParts.join('\n'))
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    // 4. Email bhejna
+    const response = await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: {
+        raw: encodedMessage,
+      },
     });
 
-    console.log('Email sent successfully:', data);
-    return data;
+    console.log('✅ Email sent successfully via Google API:', response.data);
+    return response.data;
   } catch (error) {
-    console.error('❌ Resend API Error:', error);
+    console.error('❌ Google API Error:', error);
     throw error;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import nodemailer from 'nodemailer';
 
