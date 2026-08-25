@@ -37,6 +37,14 @@ export const register = async (req, res) => {
                  <a href="https://neo-ai-terv.onrender.com/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
                 <p>Best regards,<br>The Perplexity Team</p>
         `,
+    text: `
+        Hi ${username},
+        Thank you for registering at Perplexity. We're excited to have you on board!
+        Please click the link below to verify your email:
+        https://neo-ai-terv.onrender.com/auth/verify-email?token=${emailVerificationToken}
+        Best regards,
+        The Perplexity Team
+    `
   });
 
   res.status(200).json({
