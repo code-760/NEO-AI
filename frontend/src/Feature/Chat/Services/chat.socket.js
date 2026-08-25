@@ -1,15 +1,31 @@
-import {io} from "socket.io-client";
+let socket = null;
+let socketPromise = null;
 
+export const initializeSocket = async () => {
+  if (socket?.connected) return socket;
 
-export const initializeSocket = () => {
-  const socket = io("http://localhost:3000", {
-    withCredentials: true,
+  if (!socketPromise) {
+    socketPromise = import('socket.io-client').then(({ io }) => {
+      socket = io('http://localhost:3000', {
+        withCredentials: true,
+        transports: ['websocket'],
+      });
 
-  });
+      socket.on('connect', () => {
+        console.log('Connected to the server');
+      });
 
+      return socket;
+    });
+  }
 
-  socket.on("connect", () => {
-    console.log("Connected to the server");
-  });
- 
-}
+  return socketPromise;
+};
+
+export const disconnectSocket = () => {
+  if (!socket) return;
+
+  socket.disconnect();
+  socket = null;
+  socketPromise = null;
+};

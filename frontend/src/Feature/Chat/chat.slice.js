@@ -5,6 +5,7 @@ const chatslice = createSlice({
   initialState: {
     chats: {}, // Key-Value pair: { chatId: { id, title, messages: [] } }
     createdchatId: null,
+    searchChats: [],
     loading: false,
     error: false,
   },
@@ -33,7 +34,6 @@ const chatslice = createSlice({
         state.chats[chatId].lastUpdated = new Date().toISOString();
       }
     },
-    
 
     addMessages: (state, action) => {
       const { chatId, messages } = action.payload;
@@ -59,6 +59,9 @@ const chatslice = createSlice({
     setcreatedchatId: (state, action) => {
       state.createdchatId = action.payload;
     },
+    setSearchChats: (state, action) => {
+      state.searchChats = action.payload;
+    },
 
     setloading: (state, action) => {
       state.loading = action.payload;
@@ -70,7 +73,7 @@ const chatslice = createSlice({
   },
 });
 
-export const { createNewChat, addnewmessage, addMessages, setchat, setcreatedchatId, setloading, seterror } =
+export const { createNewChat, addnewmessage, addMessages, setchat, setcreatedchatId, setloading, seterror, setSearchChats } =
   chatslice.actions;
 
 export default chatslice.reducer;

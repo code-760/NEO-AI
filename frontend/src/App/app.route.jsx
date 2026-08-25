@@ -1,26 +1,38 @@
-import { createElement } from "react";
-import { createBrowserRouter } from "react-router";
-import Login from "../Feature/Auth/pages/Login.jsx";
-import Register from "../Feature/Auth/pages/Register.jsx";
-import Protected from "../Feature/Auth/Components/Protected.jsx";
-import Dashboard from "../Feature/Chat/pages/Dashboard.jsx";
+import { Suspense, lazy } from 'react';
+import { createBrowserRouter } from 'react-router';
+import Protected from '../Feature/Auth/Components/Protected.jsx';
+
+const Login = lazy(() => import('../Feature/Auth/pages/Login.jsx'));
+const Register = lazy(() => import('../Feature/Auth/pages/Register.jsx'));
+const Dashboard = lazy(() => import('../Feature/Chat/pages/Dashboard.jsx'));
+
+const fallback = <div className="hidden" />;
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Login />,
+    path: '/',
+    element: (
+      <Suspense fallback={fallback}>
+        <Login />
+      </Suspense>
+    ),
   },
-
   {
-    path: "/app",
+    path: '/app',
     element: (
       <Protected>
-        <Dashboard />
+        <Suspense fallback={fallback}>
+          <Dashboard />
+        </Suspense>
       </Protected>
     ),
   },
   {
-    path: "/register",
-    element: <Register />,
+    path: '/register',
+    element: (
+      <Suspense fallback={fallback}>
+        <Register />
+      </Suspense>
+    ),
   },
 ]);

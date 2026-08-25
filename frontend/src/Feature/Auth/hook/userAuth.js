@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { getme, login, register } from "../Services/app.servise";
+import { getme, login, logout, register } from "../Services/app.servise";
 import { setError, setLoading, setUser } from "../app.Slice";
 import { toast } from "react-toastify";
 
@@ -90,9 +90,18 @@ export const useauth = () => {
     }
   };
 
+  const handellogout = async () => {
+      try {
+        await logout();
+      } catch (error) {
+        console.error('Failed to logout', error);
+      }
+    };
+
   return {
     hendallogin,
     hendaregistar,
     hendalgetme,
+    handellogout,
   };
 };

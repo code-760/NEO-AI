@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { User, Mail, Lock, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useauth } from '../hook/userAuth';
 import { useSelector } from 'react-redux';
-import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from 'react-router';
+import { ToastContainer } from 'react-toastify';
+import { Link, Navigate, useNavigate } from 'react-router';
 
 
 const Register = () => {
@@ -68,33 +68,22 @@ const Register = () => {
 
 
   return (
-    // Screen Center Alignment
-    <div className="flex min-h-screen w-full items-center justify-center bg-[#0C1327] p-4">
-      <ToastContainer position="top-right" autoClose={3000} theme="colored"
-      
-      />
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-slate-900/80 p-8 shadow-2xl backdrop-blur-2xl transition-all duration-300 hover:border-white/20">
-        {/* Background Accent Glow */}
-        <div className="pointer-events-none absolute -top-24 -left-20 h-48 w-48 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -right-20 h-48 w-48 rounded-full bg-purple-500/20 blur-3xl" />
-
-        {/* Header with Logo */}
+    <div className="flex min-h-screen w-full items-center justify-center bg-white p-4">
+      <ToastContainer position="top-right" autoClose={3000} theme="light" />
+      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/70 transition-all duration-300">
         <div className="relative mb-8 text-center">
-          {/* Logo Container */}
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-slate-800/80 shadow-inner shadow-indigo-500/10 backdrop-blur-md">
-            <img src="/neo_ai.png" alt="Logo" className="h-full w-full object-cover" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-indigo-500 shadow-sm">
+            <img src="https://ik.imagekit.io/zo9aabuxd/neo_ai.webp" alt="Logo" className="h-full w-full object-cover" />
           </div>
 
-          <h2 className="text-3xl font-bold tracking-tight text-white">Create Account</h2>
-          <p className="mt-2 text-sm text-slate-400">Join us today to get started with your account</p>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900">Create Account</h2>
+          <p className="mt-2 text-sm text-slate-500">Join us today to get started with your account</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="relative space-y-4">
-          {/* Username Field */}
           <div>
             <label
-              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-300"
+              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600"
               htmlFor="register-username"
             >
               Username
@@ -109,15 +98,14 @@ const Register = () => {
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="johndoe"
-                className="w-full rounded-xl border border-slate-700/80 bg-slate-800/50 py-3.5 pr-4 pl-11 text-sm text-white placeholder-slate-500 outline-none transition-all duration-200 focus:border-indigo-500 focus:bg-slate-800/80 focus:ring-4 focus:ring-indigo-500/10"
+                className="w-full rounded-xl border border-slate-300 bg-white py-3.5 pr-4 pl-11 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-slate-500 focus:ring-4 focus:ring-slate-200"
               />
             </div>
           </div>
 
-          {/* Email Field */}
           <div>
             <label
-              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-300"
+              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600"
               htmlFor="register-email"
             >
               Email Address
@@ -132,19 +120,19 @@ const Register = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-slate-700/80 bg-slate-800/50 py-3.5 pr-4 pl-11 text-sm text-white placeholder-slate-500 outline-none transition-all duration-200 focus:border-indigo-500 focus:bg-slate-800/80 focus:ring-4 focus:ring-indigo-500/10"
+                className="w-full rounded-xl border border-slate-300 bg-white py-3.5 pr-4 pl-11 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-slate-500 focus:ring-4 focus:ring-slate-200"
               />
             </div>
           </div>
 
-          {/* Password Field */}
           <div>
             <label
-              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-300"
+              className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-600"
               htmlFor="register-password"
             >
               Password
             </label>
+
             <div className="relative flex items-center">
               <Lock className="absolute left-4 h-5 w-5 text-slate-400" />
               <input
@@ -155,42 +143,43 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-slate-700/80 bg-slate-800/50 py-3.5 pr-11 pl-11 text-sm text-white placeholder-slate-500 outline-none transition-all duration-200 focus:border-indigo-500 focus:bg-slate-800/80 focus:ring-4 focus:ring-indigo-500/10"
+                className="w-full rounded-xl border border-slate-300 bg-white py-3.5 pr-11 pl-11 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-slate-500 focus:ring-4 focus:ring-slate-200"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 text-slate-400 hover:text-slate-200 focus:outline-none"
+                className="absolute right-3.5 text-slate-500 hover:text-slate-700 focus:outline-none"
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-0.5 font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-indigo-500/40 active:scale-[0.98] disabled:opacity-70"
+            className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-indigo-500 p-0.5 font-semibold text-white shadow-lg shadow-slate-300 transition-all duration-300 hover:bg-indigo-400 active:scale-[0.98] disabled:opacity-70"
           >
-            <span className="flex w-full items-center justify-center gap-2 rounded-[10px] bg-slate-950/20 px-4 py-3.5 text-sm transition-all duration-300 group-hover:bg-transparent">
+            <span className="flex w-full items-center justify-center gap-2 rounded-[10px] bg-indigo-500 px-4 py-3.5 text-sm text-white transition-all duration-300">
               {loading ? (
-                
-                <div
-                  class="w-10 h-10 border-4 border-t-pink-500  border-gray-300 rounded-full animate-spin "
-                >
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-t-slate-200 border-slate-600">
                   <span className="sr-only">Loading...</span>
                 </div>
-                
               ) : (
                 <>
                   Sign Up
                   <UserPlus className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-               
                 </>
               )}
             </span>
           </button>
+
+          <p className="mt-5 text-center text-sm text-slate-500">
+            Already have an account?{' '}
+            <Link to="/" className="font-semibold text-slate-900 transition-colors hover:text-slate-600">
+              Login
+            </Link>
+          </p>
         </form>
       </div>
     </div>

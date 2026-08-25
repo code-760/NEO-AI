@@ -51,8 +51,6 @@ export const sendmessages = async (req, res) => {
       AIMessage,
       chat,
     });
-
-    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Something went wrong while sending the message.' });
@@ -62,10 +60,8 @@ export const sendmessages = async (req, res) => {
 export const getchat = async (req, res) => {
   const token = req.user.id;
 
-  console.log(req.user.id)
+  console.log(req.user.id);
 
-
-  
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized: No token provided' });
   }
@@ -84,21 +80,20 @@ export const getchat = async (req, res) => {
     success: true,
     chatdeta,
   });
-
 };
 
 export const getmessages = async (req, res) => {
-  const  userId  = req.user.id;
- const { chatId } = req.params;
+  const userId = req.user.id;
+  const { chatId } = req.params;
 
-  console.log(chatId,userId)
+  console.log(chatId, userId);
 
   const chat = await chatModel.findOne({
-    _id:chatId ,
+    _id: chatId,
     user: userId,
   });
 
-  console.log(chat)
+  console.log(chat);
 
   if (!chat) {
     return res.status(404).json({
@@ -110,45 +105,64 @@ export const getmessages = async (req, res) => {
     chat: chatId,
   });
 
-  console.log(messages.length)
+  console.log(messages.length);
 
-  if(!messages){
-   return res.status(404).json({
-    message:"messages is not fonde",
-    success:false
-   })
+  if (!messages) {
+    return res.status(404).json({
+      message: 'messages is not fonde',
+      success: false,
+    });
   }
 
-  
   res.status(200).json({
     message: 'messages fetched successfully ',
-    success:true,
-    messages
+    success: true,
+    messages,
   });
-
-
 };
 
+export const searchchat = async (req, res) => {
 
-export const deletchat=async (req,res)=>{
+ 
 
-  const {chatId}=req.qurey
+  const { search } = req.query;
 
-
-  const chat= await chatModel.findByIdAndDelete({id:chatId,user:req.user.id})
-
-  if(!chat){
-    return req.status(404).json({
-      message:"chat not found"
-    })
+  if (!search || search.trim() == '') {
+    return res.status(400).json({
+      massage: ' Please fill data',
+      success: false,
+    });
   }
 
-  const message = await messageModel.deleteMany({chat:chatId})
+  const chats = await chatModel.find({
+    user: req.user.id,
+    title: {
+      $regex: search,
+      $options: 'i',
+    },
+  });
 
+  res.status(200).json({
+    success: true,
+    chats,
+  });
+};
+
+export const deletchat = async (req, res) => {
+  const { chatId } = req.qurey;
+
+  const chat = await chatModel.findByIdAndDelete({ id: chatId, user: req.user.id });
+
+  if (!chat) {
+    return req.status(404).json({
+      message: 'chat not found',
+    });
+  }
+
+  const message = await messageModel.deleteMany({ chat: chatId });
 
   res.status(201).json({
-    message:"messages and chat deleted",
-    success:true
-  })
-
-}
+    message: 'messages and chat deleted',
+    success: true,
+  });
+};

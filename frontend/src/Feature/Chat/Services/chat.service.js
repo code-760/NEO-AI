@@ -32,7 +32,17 @@ export const getmessages=async(chatId)=>{
   return respons
 }
 
+export const searchchat=async(search)=>{
+
+  const respons =await api.get(`chats/search?search=${search}`)
+
+ 
+  return respons
+}
+
 export const deletechat=async(chatId)=>{
   const response=await api.delete(`chats/delete/${chatId}`)
   return  response
 }
+
+

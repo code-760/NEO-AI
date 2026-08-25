@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Bot } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, } from "lucide-react";
 import { useauth } from "../hook/userAuth";
 import { ToastContainer, toast } from "react-toastify";
-import { Navigate, useNavigate } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 
 const Login = () => {
@@ -74,7 +74,7 @@ const Login = () => {
           {/* Logo Container */}
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white bg-indigo-600 shadow-md shadow-indigo-200">
             {/* Logo image or icon */}
-            <img src="/neo_ai.png" alt="Logo" className="h-16 w-16 object-contain " />
+            <img src="https://ik.imagekit.io/zo9aabuxd/neo_ai.webp" alt="Logo" className="h-16 w-16 object-contain " />
             {/* Fallback Bot Icon if image isn't loaded */}
             {/* <Bot className="h-7 w-7 text-white" /> */}
           </div>
@@ -114,7 +114,7 @@ const Login = () => {
               <label className="text-xs font-semibold uppercase tracking-wider text-gray-500" htmlFor="login-password">
                 Password
               </label>
-              <a href="#forgot" className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+              <a href="#" className="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
                 Forgot?
               </a>
             </div>
@@ -155,6 +155,13 @@ const Login = () => {
               </>
             )}
           </button>
+
+          <p className="mt-5 text-center text-sm text-slate-400">
+            Don't have an account?
+            <Link to="/register" className="font-semibold text-indigo-400 transition-colors hover:text-indigo-300">
+              Register
+            </Link>
+          </p>
         </form>
       </div>
     </div>
