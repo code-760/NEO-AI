@@ -24,6 +24,7 @@
     "langchain": "^1.5.4",
     "mongoose": "^9.8.0",
     "nodemailer": "^9.0.3",
+    "resend": "^6.22.1",
     "socket.io": "^4.8.3",
     "validator": "^13.15.35"
   }
