@@ -8,7 +8,7 @@ export const sendEmail = async ({ to, subject, html,}) => {
   try {
     const data = await resend.emails.send({
       // Free tier me 'from' address yahi same rakhna padta hai
-      from: 'onboarding@resend.dev',
+      from: 'himanshu82kumawat@gmail.com',
       to: to,
       subject: subject,
       html: html,
