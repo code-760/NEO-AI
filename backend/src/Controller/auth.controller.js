@@ -34,7 +34,7 @@ export const register = async (req, res) => {
     html: `
                 <p>Hi ${username},</p>
                 <p>Thank you for registering at <strong>Perplexity</strong>. We're excited to have you on board!</p>
-                 <a href="http://localhost:3000/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
+                 <a href="https://neo-ai-terv.onrender.com/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
                 <p>Best regards,<br>The Perplexity Team</p>
         `,
   });
