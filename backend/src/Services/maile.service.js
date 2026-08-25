@@ -8,11 +8,11 @@ export const sendEmail = async ({ to, subject, html, text }) => {
   try {
     const data = await resend.emails.send({
       // Free tier me 'from' address yahi same rakhna padta hai
-      from: 'himanshu82kumawat@gmail.com',
+      from: 'himanshu82kumawat@resend.dev',
       to: to,
       subject: subject,
       html: html,
-      text
+      text,
     });
 
     console.log('Email sent successfully:', data);
