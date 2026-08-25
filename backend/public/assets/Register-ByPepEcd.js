@@ -19,7 +19,7 @@ const D = () => {
         (await x({ username: s.username, email: s.email, password: s.password }),
           setTimeout(() => {
             u('/');
-          }, 1500));
+          }, 1000));
       } catch (r) {
         console.log(r);
       }
