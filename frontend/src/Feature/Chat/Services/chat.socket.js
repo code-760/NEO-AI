@@ -6,7 +6,7 @@ export const initializeSocket = async () => {
 
   if (!socketPromise) {
     socketPromise = import('socket.io-client').then(({ io }) => {
-      socket = io('http://localhost:3000', {
+      socket = io('https://neo-ai-terv.onrender.com/', {
         withCredentials: true,
         transports: ['websocket'],
       });
