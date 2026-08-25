@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 // Resend ko API key ke sath initialize karo
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export const sendEmail = async ({ to, subject, html,}) => {
+export const sendEmail = async ({ to, subject, html, text }) => {
   try {
     const data = await resend.emails.send({
       // Free tier me 'from' address yahi same rakhna padta hai
@@ -12,6 +12,7 @@ export const sendEmail = async ({ to, subject, html,}) => {
       to: to,
       subject: subject,
       html: html,
+      text
     });
 
     console.log('Email sent successfully:', data);
